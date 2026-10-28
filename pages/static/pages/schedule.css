@@ -1,0 +1,133 @@
+/* ===== 1. 變數：顏色集中在這裡，改這裡全站跟著變 ===== */
+:root{
+  --bg:#cad8ea;          /* 頁面背景（Figma 淡藍） */
+  --panel:#b3c3d4;       /* 側欄底色 */
+  --panel-head:#8a9bad;  /* 側欄標題底色 */
+  --head:#f0f0f0;        /* 表格表頭 */
+  --line:#dcdcdc;        /* 表格線 */
+  --ink:#1d2733;         /* 文字色 */
+  --accent-a:#e4ecf8;    /* 按鈕漸變：起點（淺） */
+  --accent-b:#8fb0dc;    /* 按鈕漸變：終點（深） */
+}
+
+/* ===== 2. 基礎 ===== */
+*{box-sizing:border-box}   /* 寬高把 padding、邊框算進去，排版比較好算 */
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+
+/* ===== 3. 三欄版面：左 210px / 中間自動 / 右 200px ===== */
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr) 200px;gap:28px;align-items:start;
+  max-width:1440px;margin:0 auto;padding:56px 32px}
+
+/* ===== 4. 側欄面板 ===== */
+.panel{background:var(--panel);border-radius:10px;overflow:hidden}
+.panel-head{margin:0;padding:8px 0;background:var(--panel-head);text-align:center;font-size:15px;font-weight:500}
+.panel-head.small{font-size:12px;line-height:1.7}
+.panel-body{padding:22px 22px 26px}
+.filter{margin-top:78px}                    /* 讓左面板和課表上緣對齊 */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;margin:0 0 5px 4px}
+
+/* ===== 5. 自製下拉選單 ===== */
+.dd{position:relative}                      /* 讓選項清單能相對它定位 */
+.dd-btn{
+  width:100%;height:30px;border:0;border-radius:15px;padding:0 14px;text-align:left;
+  font:inherit;font-size:13px;color:var(--ink);cursor:pointer;position:relative;
+  /* 漸變技巧：背景拉成 2.5 倍寬，平常只露出左側的白色 */
+  background:linear-gradient(100deg,#fff 0%,#fff 40%,var(--accent-b) 100%);
+  background-size:250% 100%;background-position:0 0;
+  transition:background-position .5s ease,box-shadow .25s;
+}
+/* 右側小箭頭：用 ::after 畫一個旋轉 45° 的 L 形邊框 */
+.dd-btn::after{content:"";position:absolute;right:13px;top:11px;width:6px;height:6px;
+  border-right:2px solid #5d7390;border-bottom:2px solid #5d7390;transform:rotate(45deg);
+  transition:transform .3s,top .3s}
+/* 滑過或展開時：背景往左滑，露出深色 → 看起來像顏色漸變 */
+.dd-btn:hover,.dd.open .dd-btn{background-position:100% 0;box-shadow:0 2px 8px rgba(60,90,130,.28)}
+.dd.open .dd-btn::after{transform:rotate(-135deg);top:14px}   /* 展開時箭頭翻轉 */
+.dd-btn:focus-visible,.btn:focus-visible{outline:2px solid #2f5d9e;outline-offset:2px}  /* 鍵盤操作時顯示外框 */
+
+/* 選項清單：平常高度 0 + 透明 + 往上偏一點；加上 .open 才長出來 */
+.dd-list{
+  list-style:none;margin:6px 0 0;padding:6px;position:absolute;left:0;right:0;z-index:20;
+  background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(40,70,110,.25);
+  max-height:0;opacity:0;transform:translateY(-8px);pointer-events:none;overflow:hidden;
+  transition:max-height .35s ease,opacity .25s,transform .25s;
+}
+.dd.open .dd-list{max-height:240px;opacity:1;transform:none;pointer-events:auto;overflow:auto}
+/* 選項滑過：背景從左到右「填滿」顏色 */
+.dd-list li{padding:7px 10px;border-radius:8px;font-size:13px;cursor:pointer;
+  background:linear-gradient(90deg,var(--accent-b),var(--accent-a));
+  background-size:0 100%;background-repeat:no-repeat;transition:background-size .35s ease}
+.dd-list li:hover,.dd-list li.sel{background-size:100% 100%}   /* .sel = 目前選中的項目 */
+
+/* ===== 6. 按鈕：漸變 + 點擊效果 ===== */
+.actions{display:flex;justify-content:space-between;margin-top:150px}
+.btn{
+  position:relative;overflow:hidden;          /* overflow 讓波紋不會跑出按鈕外 */
+  border:0;border-radius:16px;padding:7px 20px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;
+  background:linear-gradient(100deg,var(--accent-a) 0%,var(--accent-a) 45%,var(--accent-b) 100%);
+  background-size:250% 100%;
+  transition:background-position .5s ease,transform .12s,box-shadow .25s;
+}
+.btn:hover{background-position:100% 0;box-shadow:0 3px 10px rgba(60,90,130,.3)}   /* 滑過：漸變 */
+.btn:active{transform:scale(.93);box-shadow:none}                               /* 按住：縮小 */
+.btn.loading{pointer-events:none;background-position:100% 0}                    /* 載入中：不能再按 */
+.btn.loading::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;
+  border:2px solid #fff;border-top-color:#2f5d9e;border-radius:50%;
+  animation:spin .6s linear infinite;vertical-align:-1px}                       /* 轉圈圈 */
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.7);
+  transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}   /* 波紋：由 JS 動態加入 */
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== 7. 標題與課表 ===== */
+.title{display:flex;align-items:center;gap:20px;margin:0 0 14px;font-weight:400;
+  font-size:28px;letter-spacing:.08em;justify-content:center}
+.title i{flex:1;height:1px;background:#4a5563;max-width:260px}   /* 標題兩側的線 */
+.table-wrap{background:#fff;border:1px solid var(--line);overflow-x:auto}   /* 螢幕太窄時可左右捲動 */
+#schedule{width:100%;min-width:760px;border-collapse:collapse;table-layout:fixed}  /* fixed：每欄等寬 */
+#schedule th,#schedule td{border:1px solid var(--line);padding:4px;text-align:center;vertical-align:middle}
+#schedule th{background:var(--head);height:62px;font-weight:500;font-size:15px}
+#schedule th small{display:block;font-weight:400;font-size:11px;color:#6b7684}
+#schedule td{height:62px;font-size:12px}
+#schedule td.period{background:#fafafa;line-height:1.5}
+#schedule td.period small{display:block;color:#6b7684}
+
+/* 課程卡片：顏色由 JS 依課名算出，這裡管形狀與動畫 */
+.course{height:100%;min-height:54px;border-radius:6px;padding:7px 6px;display:flex;flex-direction:column;
+  justify-content:center;gap:2px;line-height:1.4;
+  animation:pop .45s ease backwards;transition:transform .2s,box-shadow .2s}
+.course:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(40,70,110,.25)}
+.course b{font-size:13px}
+.course span{font-size:11px;color:#3d4958}
+@keyframes pop{from{opacity:0;transform:scale(.85)}}   /* 進場：由小放大 */
+
+/* ===== 8. 注意事項：動態排程 ===== */
+.notice-body{padding:14px 12px;height:220px;display:flex;flex-direction:column;background:linear-gradient(#b3c3d4,#b9c8da)}
+#noticeList{list-style:none;margin:0;padding:0;flex:1;overflow:hidden;position:relative}
+#noticeList li{
+  font-size:12px;line-height:1.55;padding:8px 10px;margin-bottom:6px;border-radius:8px;
+  background:rgba(255,255,255,.25);opacity:.45;transform:translateX(16px);     /* 預設：變淡、偏右 */
+  transition:opacity .5s,transform .5s,background .5s;
+  animation:slideIn .5s ease backwards;animation-delay:calc(var(--i)*.12s);    /* 依序進場（--i 由 JS 設定）*/
+}
+#noticeList li.active{opacity:1;transform:none;background:#fff;box-shadow:0 2px 8px rgba(60,90,130,.25)} /* 目前這則 */
+#noticeList li time{display:block;font-size:11px;color:#4f6a8c;margin-bottom:2px}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px)}}
+.progress{height:3px;background:rgba(255,255,255,.4);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:#4f7bb5}          /* 寬度由 JS 每一格更新 */
+
+/* ===== 9. 底部提示訊息 ===== */
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:#2f4766;color:#fff;
+  padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:.35s}
+.toast.show{opacity:1;transform:translate(-50%,0)}   /* JS 加上 .show 就會浮現 */
+
+/* ===== 10. 手機版 / 無障礙 ===== */
+@media (max-width:1000px){                 /* 螢幕小於 1000px：三欄改成一欄 */
+  .layout{grid-template-columns:1fr;padding:24px 16px}
+  .filter{margin-top:0}.actions{margin-top:24px}
+}
+@media (prefers-reduced-motion:reduce){    /* 使用者設定「減少動畫」時，關閉所有動畫 */
+  *{animation:none!important;transition:none!important}
+}

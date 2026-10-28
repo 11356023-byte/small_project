@@ -1,0 +1,74 @@
+{% load static %}{# 讓範本可以使用 {% static %} 來引用 CSS/JS #}
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>大學部課表</title>
+  <link rel="stylesheet" href="{% static 'pages/schedule.css' %}">
+</head>
+
+{# data-api 把 API 網址交給 JS，之後改路由 JS 不用跟著改 #}
+<body data-api="{% url 'schedule-api' %}">
+<main class="layout">   {# 三欄版面：左篩選 / 中課表 / 右注意事項 #}
+
+  {# ───── 左：篩選面板 ───── #}
+  <aside class="panel filter">
+    <h2 class="panel-head">您的篩選</h2>
+    <div class="panel-body">
+
+      <div class="field"><label>學年</label>
+        <div class="dd" data-key="year">
+          <button type="button" class="dd-btn"><span></span></button>
+          <ul class="dd-list">{% for o in options.year %}<li data-value="{{ o }}">{{ o }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <div class="field"><label>學期</label>
+        <div class="dd" data-key="semester">
+          <button type="button" class="dd-btn"><span></span></button>
+          <ul class="dd-list">{% for o in options.semester %}<li data-value="{{ o }}">{{ o }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <div class="field"><label>系所</label>
+        <div class="dd" data-key="dept">
+          <button type="button" class="dd-btn"><span></span></button>
+          <ul class="dd-list">{% for o in options.dept %}<li data-value="{{ o }}">{{ o }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <div class="field"><label>年級</label>
+        <div class="dd" data-key="grade">
+          <button type="button" class="dd-btn"><span></span></button>
+          <ul class="dd-list">{% for o in options.grade %}<li data-value="{{ o }}">{{ o }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="logoutBtn">登出</button>
+        <button type="button" class="btn" id="queryBtn">篩選</button>
+      </div>
+    </div>
+  </aside>
+
+  {# ───── 中：標題 + 課表（表格內容由 JS 填入）───── #}
+  <section class="center">
+    <h1 class="title"><i></i>大學部<i></i></h1>   {# 兩個 <i> 是標題左右兩條線 #}
+    <div class="table-wrap"><table id="schedule"></table></div>
+  </section>
+
+  {# ───── 右：課堂注意事項（清單由 JS 填入並自動輪播）───── #}
+  <aside class="panel notice">
+    <h2 class="panel-head small">您好：user<br>課堂注意事項</h2>
+    <div class="panel-body notice-body">
+      <ul id="noticeList"></ul>
+      <div class="progress"><span id="noticeBar"></span></div>   {# 進度條 #}
+    </div>
+  </aside>
+</main>
+
+<div class="toast" id="toast" role="status"></div>   {# 底部提示訊息 #}
+<script src="{% static 'pages/schedule.js' %}"></script>   {# JS 放最後，確保上面的元素都已存在 #}
+</body>
+</html>
