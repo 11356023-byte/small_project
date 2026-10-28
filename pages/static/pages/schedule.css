@@ -24,8 +24,9 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft
 .panel-head{margin:0;padding:8px 0;background:var(--panel-head);text-align:center;font-size:15px;font-weight:500}
 .panel-head.small{font-size:12px;line-height:1.7}
 .panel-body{padding:22px 22px 26px}
-.filter{margin-top:78px}                    /* 讓左面板和課表上緣對齊 */
-.field{margin-bottom:18px}
+.filter{margin-top:55px}
+.panel-notice{margin-top:55px;background:var(--panel-notice);border-radius:10px;overflow:hidden}                    /* 讓左面板和課表上緣對齊 */
+.field{margin-bottom:8px}
 .field label{display:block;font-size:12px;margin:0 0 5px 4px}
 
 /* ===== 5. 自製下拉選單 ===== */
@@ -103,20 +104,19 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft
 .course span{font-size:11px;color:#3d4958}
 @keyframes pop{from{opacity:0;transform:scale(.85)}}   /* 進場：由小放大 */
 
+
 /* ===== 8. 注意事項：動態排程 ===== */
-.notice-body{padding:14px 12px;height:220px;display:flex;flex-direction:column;background:linear-gradient(#b3c3d4,#b9c8da)}
-#noticeList{list-style:none;margin:0;padding:0;flex:1;overflow:hidden;position:relative}
+.notice-body{padding:14px 12px;height: 280px;display:flex;flex-direction:column;background:linear-gradient(#b3c3d4,#b9c8da)}
+#noticeList{list-style:none;margin:0;padding:0;flex:1;overflow:hidden;;position:relative}
 #noticeList li{
   font-size:12px;line-height:1.55;padding:8px 10px;margin-bottom:6px;border-radius:8px;
-  background:rgba(255,255,255,.25);opacity:.45;transform:translateX(16px);     /* 預設：變淡、偏右 */
+  background:rgba(255,255,255,.25);opacity:.45;transform:none;     /* 預設：變淡、偏右 */
   transition:opacity .5s,transform .5s,background .5s;
   animation:slideIn .5s ease backwards;animation-delay:calc(var(--i)*.12s);    /* 依序進場（--i 由 JS 設定）*/
 }
-#noticeList li.active{opacity:1;transform:none;background:#fff;box-shadow:0 2px 8px rgba(60,90,130,.25)} /* 目前這則 */
+#noticeList li.active{opacity:1;transform:translateY(-10px);background:#fff;box-shadow:0 2px 8px rgba(60,90,130,.25)} /* 目前這則 */
 #noticeList li time{display:block;font-size:11px;color:#4f6a8c;margin-bottom:2px}
-@keyframes slideIn{from{opacity:0;transform:translateY(14px)}}
-.progress{height:3px;background:rgba(255,255,255,.4);border-radius:2px;margin-top:8px;overflow:hidden}
-.progress span{display:block;height:100%;width:0;background:#4f7bb5}          /* 寬度由 JS 每一格更新 */
+@keyframes slideIn{from{opacity:0;transform:translateY(15px)}}
 
 /* ===== 9. 底部提示訊息 ===== */
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:#2f4766;color:#fff;
