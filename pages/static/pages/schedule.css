@@ -110,7 +110,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft
 #noticeList{list-style:none;margin:0;padding:0;flex:1;overflow:hidden;;position:relative}
 #noticeList li{
   font-size:12px;line-height:1.55;padding:8px 10px;margin-bottom:6px;border-radius:8px;
-  background:rgba(255,255,255,.25);opacity:.45;transform:none;     /* 預設：變淡、偏右 */
+  background:rgba(255,255,255,.25);opacity:.45;transform:translateY(15px);     /* 預設：變淡、偏右 */
   transition:opacity .5s,transform .5s,background .5s;
   animation:slideIn .5s ease backwards;animation-delay:calc(var(--i)*.12s);    /* 依序進場（--i 由 JS 設定）*/
 }
